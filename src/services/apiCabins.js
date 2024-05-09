@@ -12,21 +12,37 @@ export async function getCabins() {
 }
 
 // *******************************************************************************************************
-export async function createCabin(newCabin) {
+export async function createEditCabin(newCabin, id) {
+  // console.log(newCabin, id);
+  // console.log(newCabin.image);
+
+  // check when editing (if image was edited or not)
+  const hasImagePath = newCabin.image?.startsWith?.(supabaseUrl);
+
   // We have not only upload the image but also specify the path to the image in the bucket with newCabin
   const imageName = `${Math.random()}-${newCabin.image.name}`.replaceAll(
     "/",
     ""
   );
   // https://ycntrqogldapvdatsdvs.supabase.co/storage/v1/object/public/cabin-images/cabin-003.jpg
-  const imagePath = `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
+  const imagePath = hasImagePath
+    ? newCabin.image
+    : `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
 
-  // 1) Create cabin
-  const { data, error } = await supabase
-    .from("cabins")
-    .insert([{ ...newCabin, image: imagePath }]) // it is important to have shape of the supabase table in newCabin obj (same names etc)
-    // .insert([{ some_column: "someValue", other_column: "otherValue" }])
-    .select();
+  // 1) Create/Edit cabin
+  let query = supabase.from("cabins");
+
+  // A) CREATE
+  if (!id) query = query.insert([{ ...newCabin, image: imagePath }]); // it is important to have shape of the supabase table in newCabin obj (same names etc)
+
+  // B) EDIT
+  if (id)
+    query = query
+      .update({ ...newCabin, image: imagePath })
+      .eq("id", id)
+      .select();
+
+  const { data, error } = await query.select().single();
 
   if (error) {
     console.error(error);
@@ -51,6 +67,7 @@ export async function createCabin(newCabin) {
       "Cabin image could not be uploaded and cabin was not created"
     );
   }
+  return data;
 }
 
 // *******************************************************************************************************

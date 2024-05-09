@@ -1,6 +1,6 @@
 import { StyleSheetManager } from "styled-components";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import toast from "react-hot-toast";
+import { useForm } from "react-hook-form";
+import { useCreateCabin } from "./useCreateCabin";
 
 import Input from "../../ui/Input";
 import Form from "../../ui/Form";
@@ -8,9 +8,7 @@ import Button from "../../ui/Button";
 import FileInput from "../../ui/FileInput";
 import Textarea from "../../ui/Textarea";
 import FormRow from "../../ui/FormRow";
-
-import { useForm } from "react-hook-form";
-import { createEditCabin } from "../../services/apiCabins";
+import { useEditCabin } from "./useEditCabin";
 
 function CreateCabinForm({ cabinToEdit = {} }) {
   const { id: editId, ...editValues } = cabinToEdit;
@@ -26,34 +24,8 @@ function CreateCabinForm({ cabinToEdit = {} }) {
   // getValues returns an object with form values
   // formState to read the errors
 
-  const queryClient = useQueryClient();
-
-  // mutation logic - Create Cabin
-  const { mutate: createCabin, isLoading: isCreating } = useMutation({
-    mutationFn: (data) => createEditCabin(data), // same as createCabin,
-
-    onSuccess: () => {
-      toast.success("New cabin successfully created");
-      queryClient.invalidateQueries({ queryKey: ["cabins"] });
-      reset();
-    },
-
-    onError: (err) => toast.error(err.message),
-  });
-
-  // mutation logic - Edit Cabin
-  const { mutate: editCabin, isLoading: isEditing } = useMutation({
-    mutationFn: ({ data, id }) => createEditCabin(data, id), // mutationFn only accept one aregument, so we have to pass an object
-
-    onSuccess: () => {
-      toast.success("Cabin successfully edited");
-      queryClient.invalidateQueries({ queryKey: ["cabins"] });
-      reset();
-    },
-
-    onError: (err) => toast.error(err.message),
-  });
-
+  const { createCabin, isCreating } = useCreateCabin();
+  const { editCabin, isEditing } = useEditCabin();
   const isWorking = isCreating || isEditing;
 
   // event handlers
@@ -62,8 +34,11 @@ function CreateCabinForm({ cabinToEdit = {} }) {
     const image = typeof data.image === "string" ? data.image : data.image[0];
 
     if (isEditSession)
-      editCabin({ data: { ...data, image }, id: editId }); // params (data, id)
-    else createCabin({ ...data, image: image });
+      editCabin(
+        { data: { ...data, image }, id: editId }, // params (data, id)
+        { onSuccess: () => reset() }
+      );
+    else createCabin({ ...data, image: image }, { onSuccess: () => reset() });
   }
 
   // When there is a validation error from atleast one field, then handleSubmit will execute onError instead of onSubmit

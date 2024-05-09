@@ -22,7 +22,6 @@ export async function createCabin(newCabin) {
   const imagePath = `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
 
   // 1) Create cabin
-
   const { data, error } = await supabase
     .from("cabins")
     .insert([{ ...newCabin, image: imagePath }]) // it is important to have shape of the supabase table in newCabin obj (same names etc)
@@ -41,8 +40,12 @@ export async function createCabin(newCabin) {
 
   // 3) Delete the cabin IF there was an error uploading image
   if (storageError) {
-    await supabase.from("cabins").delete().eq("id", data.id);
+    const { error: imageFailed_CabinDeleteError } = await supabase
+      .from("cabins")
+      .delete()
+      .eq("id", data.at(0).id); // data array returned from supabase contains new id, not the newCabin object // console.log(data);
 
+    console.error(imageFailed_CabinDeleteError);
     console.error(storageError);
     throw new Error(
       "Cabin image could not be uploaded and cabin was not created"

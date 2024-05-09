@@ -36,7 +36,7 @@ function CreateCabinForm() {
   // event handlers
   function onSubmit(data) {
     // console.log(data);
-    mutate(data);
+    mutate({ ...data, image: data.image[0] });
   }
 
   // When there is a validation error from atleast one field, then handleSubmit will execute onError instead of onSubmit
@@ -110,7 +110,12 @@ function CreateCabinForm() {
       </FormRow>
 
       <FormRow label="Cabin photo">
-        <FileInput id="image" accept="image/*" />
+        <FileInput
+          id="image"
+          // type="file" // added to styled.input.attrs({ type: "file" })
+          accept="image/*"
+          {...register("image", { required: "This field is required" })}
+        />
       </FormRow>
 
       <FormRow>

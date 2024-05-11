@@ -20,6 +20,7 @@ function UpdateSettingsForm() {
 
   function handleUpdateSetting(e, field) {
     const { value } = e.target;
+    // const value = e.target.value;
 
     if (!value) return;
     updateSetting({ [field]: value }); // object property created dynamically

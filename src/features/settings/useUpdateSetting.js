@@ -7,6 +7,7 @@ export function useUpdateSetting() {
 
   // mutation logic - Update Setting
   const { mutate: updateSetting, isLoading: isUpdating } = useMutation({
+    // mutationFn: (updatedSetting) => updateSettingApi(updatedSetting),
     mutationFn: updateSettingApi,
 
     onSuccess: () => {

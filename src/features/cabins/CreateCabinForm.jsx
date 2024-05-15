@@ -10,7 +10,7 @@ import Textarea from "../../ui/Textarea";
 import FormRow from "../../ui/FormRow";
 import { useEditCabin } from "./useEditCabin";
 
-function CreateCabinForm({ cabinToEdit = {} }) {
+function CreateCabinForm({ cabinToEdit = {}, onCloseModal }) {
   const { id: editId, ...editValues } = cabinToEdit;
   const isEditSession = Boolean(editId);
   // console.log(cabinToEdit);
@@ -36,9 +36,23 @@ function CreateCabinForm({ cabinToEdit = {} }) {
     if (isEditSession)
       editCabin(
         { data: { ...data, image }, id: editId }, // params (data, id)
-        { onSuccess: () => reset() }
+        {
+          onSuccess: () => {
+            reset();
+            onCloseModal?.();
+          },
+        }
       );
-    else createCabin({ ...data, image: image }, { onSuccess: () => reset() });
+    else
+      createCabin(
+        { ...data, image: image },
+        {
+          onSuccess: () => {
+            reset();
+            onCloseModal?.();
+          },
+        }
+      );
   }
 
   // When there is a validation error from atleast one field, then handleSubmit will execute onError instead of onSubmit
@@ -48,7 +62,10 @@ function CreateCabinForm({ cabinToEdit = {} }) {
   }
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit, onError)}>
+    <Form
+      onSubmit={handleSubmit(onSubmit, onError)}
+      type={onCloseModal ? "modal" : "regular"}
+    >
       <FormRow label="Cabin name" error={errors?.name?.message}>
         <Input
           type="text"
@@ -125,7 +142,11 @@ function CreateCabinForm({ cabinToEdit = {} }) {
       <FormRow>
         {/* type is an HTML attribute! */}
         <StyleSheetManager shouldForwardProp={(prop) => prop !== "variation"}>
-          <Button variation="secondary" type="reset">
+          <Button
+            variation="secondary"
+            type="reset"
+            onClick={() => onCloseModal?.()}
+          >
             Cancel
           </Button>
 

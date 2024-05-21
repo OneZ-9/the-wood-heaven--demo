@@ -21,14 +21,22 @@ export function useBookings() {
   const [field, direction] = sortByRaw.split("-");
   const sortBy = { field, direction };
 
+  // PAGINATION
+  const page = !searchParams.get("page") ? 1 : Number(searchParams.get("page"));
+
   const {
     isLoading,
-    data: bookings,
+    data: { data: bookings, count } = {},
+    // data,
     error,
   } = useQuery({
-    queryKey: ["bookings", filter, sortBy], // act like dependancy array of useQuery
-    queryFn: () => getBookings({ filter, sortBy }),
+    queryKey: ["bookings", filter, sortBy, page], // act like dependancy array of useQuery
+    queryFn: () => getBookings({ filter, sortBy, page }),
   });
 
-  return { isLoading, bookings, error };
+  // Ensure data is defined before destructuring
+  // const bookings = data?.data || [];
+  // const count = data?.count || 0;
+
+  return { isLoading, bookings, count, error };
 }

@@ -7,7 +7,7 @@ import { useBookings } from "./useBookings";
 import Spinner from "../../ui/Spinner";
 
 function BookingTable() {
-  const { isLoading, bookings, error } = useBookings();
+  const { isLoading, bookings } = useBookings();
   // console.log(bookings);
 
   if (isLoading) return <Spinner />;

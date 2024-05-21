@@ -16,13 +16,18 @@ export function useBookings() {
   //  If multiple conditions, pass array of objects
   // [{ field: "status", value: filterValue, method: "eq" }, { field: "totalPrice", value: 7000, method: "gte" }];
 
+  // SORT
+  const sortByRaw = searchParams.get("sortBy") || "startDate-desc";
+  const [field, direction] = sortByRaw.split("-");
+  const sortBy = { field, direction };
+
   const {
     isLoading,
     data: bookings,
     error,
   } = useQuery({
-    queryKey: ["bookings", filter], // act like dependancy array of useQuery
-    queryFn: () => getBookings({ filter }),
+    queryKey: ["bookings", filter, sortBy], // act like dependancy array of useQuery
+    queryFn: () => getBookings({ filter, sortBy }),
   });
 
   return { isLoading, bookings, error };

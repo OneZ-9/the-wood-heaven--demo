@@ -10,7 +10,7 @@ export async function getBookings({ filter, sortBy }) {
     ); // .select("*, cabins(*), guests(*)");
 
   // FILTER
-  if (filter !== null)
+  if (filter)
     // query = query.eq(filter.field, filter.value);
     query = query[filter.method || "eq"](filter.field, filter.value);
 
@@ -18,6 +18,12 @@ export async function getBookings({ filter, sortBy }) {
   // filter.forEach((condition) => {
   //   query = query[condition.method](condition.field, condition.value);
   // });
+
+  // SORT
+  if (sortBy)
+    query = query.order(sortBy.field, {
+      ascending: sortBy.direction === "asc",
+    });
 
   const { data, error } = await query;
 

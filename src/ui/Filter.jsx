@@ -42,6 +42,8 @@ function Filter({ filterField, options }) {
   function handleClick(value) {
     // URLSearchParam => searchParams.set('name', value)
     searchParams.set(filterField, value); // This updates the 'discount' parameter to the new value
+    if (searchParams.get("page")) searchParams.set("page", 1);
+
     setSearchParams(searchParams); // This updates the URL with the new query parameters
   }
 

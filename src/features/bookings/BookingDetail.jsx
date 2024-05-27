@@ -12,6 +12,9 @@ import ButtonGroup from "../../ui/ButtonGroup";
 import Button from "../../ui/Button";
 import ButtonText from "../../ui/ButtonText";
 import Spinner from "../../ui/Spinner";
+import { useDeleteBooking } from "./useDeleteBooking";
+import Modal from "../../ui/Modal";
+import ConfirmDelete from "../../ui/ConfirmDelete";
 
 const HeadingGroup = styled.div`
   display: flex;
@@ -23,6 +26,7 @@ function BookingDetail() {
   const { isLoading, booking } = useBooking();
   // console.log(booking);
   const { status, id: bookingId } = booking;
+  const { isDeletingBooking, deleteBooking } = useDeleteBooking();
   const navigate = useNavigate();
 
   const moveBack = useMoveBack();
@@ -34,7 +38,12 @@ function BookingDetail() {
     "checked-out": "silver",
   };
 
-  if (isLoading) return <Spinner />;
+  // function handleDeleteBooking() {
+  //   deleteBooking(bookingId);
+  //   navigate("/bookings");
+  // }
+
+  if (isLoading || isDeletingBooking) return <Spinner />;
 
   return (
     <>
@@ -60,6 +69,25 @@ function BookingDetail() {
             Check out
           </Button>
         )}
+
+        <Modal>
+          {status !== "checked-in" && (
+            <Modal.Open opens="delete-booking">
+              <Button variation="danger">Delete booking</Button>
+            </Modal.Open>
+          )}
+
+          <Modal.Window name="delete-booking">
+            <ConfirmDelete
+              resourceName="booking"
+              disabled={isDeletingBooking}
+              onConfirm={
+                () =>
+                  deleteBooking(bookingId, { onSettled: () => navigate(-1) }) //  can pass 2nd part with an object which includes all the options we need to specify
+              }
+            />
+          </Modal.Window>
+        </Modal>
 
         <Button variation="secondary" onClick={moveBack}>
           Back

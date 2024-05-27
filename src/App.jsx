@@ -42,7 +42,7 @@ function App() {
               </ProtectedRoute>
             }
           >
-            <Route index element={<Navigate replace to="dashboard" />} />{" "}
+            <Route index element={<Navigate replace to="dashboard" />} />
             {/* Redirect to dashboard in path '/' */}
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="bookings" element={<Bookings />} />

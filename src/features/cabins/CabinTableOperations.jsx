@@ -9,7 +9,7 @@ function CabinTableOperations() {
         filterField={"discount"}
         options={[
           { value: "all", label: "all" },
-          { value: "no-discount", label: "no-discoun" },
+          { value: "no-discount", label: "no-discount" },
           { value: "with-discount", label: "with-discount" },
         ]}
       />

@@ -15,6 +15,7 @@ import Spinner from "../../ui/Spinner";
 import { useDeleteBooking } from "./useDeleteBooking";
 import Modal from "../../ui/Modal";
 import ConfirmDelete from "../../ui/ConfirmDelete";
+import Empty from "../../ui/Empty";
 
 const HeadingGroup = styled.div`
   display: flex;
@@ -23,7 +24,7 @@ const HeadingGroup = styled.div`
 `;
 
 function BookingDetail() {
-  const { isLoading, booking } = useBooking();
+  const { isLoading, booking, error: bookingError } = useBooking();
   // console.log(booking);
   const { status, id: bookingId } = booking;
   const { isDeletingBooking, deleteBooking } = useDeleteBooking();
@@ -44,6 +45,8 @@ function BookingDetail() {
   // }
 
   if (isLoading || isDeletingBooking) return <Spinner />;
+  if (bookingError?.message === "Booking not found")
+    return <Empty resourceName="booking" />;
 
   return (
     <>

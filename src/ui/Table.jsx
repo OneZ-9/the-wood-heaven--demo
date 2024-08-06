@@ -12,7 +12,7 @@ const StyledTable = styled.div`
 
 const CommonRow = styled.div`
   display: grid;
-  grid-template-columns: ${(props) => props.columns};
+  grid-template-columns: ${(props) => props.$columns};
   column-gap: 2.4rem;
   align-items: center;
   transition: none;
@@ -62,29 +62,29 @@ const Empty = styled.p`
 
 const TableContext = createContext();
 
-function Table({ children, columns }) {
+function Table({ children, $columns }) {
   return (
-    <TableContext.Provider value={{ columns }}>
+    <TableContext.Provider value={{ $columns }}>
       <StyledTable role="table">{children}</StyledTable>
     </TableContext.Provider>
   );
 }
 
 function Header({ children }) {
-  const { columns } = useContext(TableContext);
+  const { $columns } = useContext(TableContext);
 
   return (
-    <StyledHeader as="header" role="row" columns={columns}>
+    <StyledHeader as="header" role="row" $columns={$columns}>
       {children}
     </StyledHeader>
   );
 }
 
 function Row({ children }) {
-  const { columns } = useContext(TableContext);
+  const { $columns } = useContext(TableContext);
 
   return (
-    <StyledRow role="row" columns={columns}>
+    <StyledRow role="row" $columns={$columns}>
       {children}
     </StyledRow>
   );
